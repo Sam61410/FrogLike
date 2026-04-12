@@ -1,0 +1,24 @@
+using StarterAssets;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
+using System.Collections;
+using System;
+using UnityEditor.PackageManager;
+using TMPro;
+
+public class Loot : MonoBehaviour
+{
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}

@@ -1,6 +1,9 @@
-using UnityEngine;
+using StarterAssets;
 using System;
-using System.Collections;using StarterAssets;
+using System.Collections;
+using UnityEngine;
+using TMPro;
+
 
 
 public class Shoot : MonoBehaviour
@@ -10,20 +13,23 @@ public class Shoot : MonoBehaviour
     public GameObject Fire;
     public GameObject HitPoint;
 
-    public bool canShoot;
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] Transform projectileSpawnPoint;
     [SerializeField] int damage = 2;
-
     [SerializeField] float fireRate = 2f;
+    [SerializeField] TMP_Text ultText;
+
+    public bool canShoot;
+    public float ultTimer = 1f;
 
     void Update()
     {
-        if (Input.GetButtonDown("Fire1") && canShoot)
+        if (Input.GetKeyDown(KeyCode.Mouse0) && canShoot)
         {
+            Debug.Log("hdadafq");
             Shooting();
         }
-        if (Input.GetButtonDown("Fire2") && canShoot)
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             StartCoroutine(FireRoutine());
         }
@@ -44,10 +50,23 @@ public class Shoot : MonoBehaviour
         }
     }
 
+    public void HandleUltTimer()
+    {
+        if (ultTimer > 0f && canShoot)
+        {
+            ultTimer -= Time.deltaTime;
+            ultText.text = "Leap (Q) : " + Mathf.Clamp(ultTimer, 0f, 2f).ToString("F2") + "s";
+        }
+        else
+        {
+            ultText.text = "Leap (Q) ready!";
+        }
+    }
+
     IEnumerator FireRoutine()
     {
         yield return new WaitForSeconds(fireRate);
-        Projectile newProjectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity).GetComponent<Projectile>();
+        Projectile newProjectile = Instantiate(projectilePrefab, FirePoint.position, Quaternion.identity).GetComponent<Projectile>();
         newProjectile.Init(damage);
     }
 }

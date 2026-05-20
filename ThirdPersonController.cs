@@ -20,8 +20,8 @@ namespace StarterAssets
 
         [Tooltip("Sprint speed of the character in m/s")]
         public float SprintSpeed = 5.335f;
-        public float DashSpeed;
-        public float LeapPower;
+        public float DashSpeed = 60f;
+        public float LeapPower = 8f;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -54,7 +54,7 @@ namespace StarterAssets
         [Header("Player Grounded")]
         [Tooltip("If the character is grounded or not. Not part of the CharacterController built in grounded check")]
         public bool Grounded = true;
-        public bool canMove = true;
+        public bool canMove = false;
 
         [Tooltip("Useful for rough ground")]
         public float GroundedOffset = -0.14f;
@@ -302,6 +302,7 @@ namespace StarterAssets
             if(canMove)
             {
                 _verticalVelocity = Mathf.Sqrt(LeapPower * -2f * Gravity);
+                _controller.Move(transform.forward * DashSpeed * Time.deltaTime);
             }
         }
         private void JumpAndGravity()

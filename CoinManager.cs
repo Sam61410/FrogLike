@@ -4,7 +4,6 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using System.Collections;
 using System;
-using UnityEditor.PackageManager;
 using TMPro;
 
 public class CoinManager : MonoBehaviour
@@ -25,11 +24,23 @@ public class CoinManager : MonoBehaviour
     void Update()
     {
         coinText.text = "Coins: " + coinAmount;
-
     }
 
     public void AddCoins(int amount)
     {
         coinAmount += amount;
+    }
+
+    public sbyte SpendCoins(int amount)
+    {
+        if (coinAmount >= amount)
+        {
+            coinAmount -= amount;
+            return 0; // Success
+        }
+        else
+        {
+            return -1; // Not enough coins
+        }
     }
 }

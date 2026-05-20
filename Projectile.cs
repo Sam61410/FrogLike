@@ -1,29 +1,34 @@
-using StarterAssets;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    [SerializeField] float speed = 10f;
+    public float speed = 10f;
+    [SerializeField] Transform playerTargetPoint;
+    [SerializeField] Transform player;
     [SerializeField] GameObject projectileHitVFX;
-    [SerializeField] GameObject camera;
+    [SerializeField] PlayerHealth playerHealth;
 
-    Rigidbody rb;
+    public Rigidbody rb;
 
-    int damage;
+    int damage = 10;
+    public float dieTimer = 1.5f;
 
     void Awake()
     {
+        player = FindFirstObjectByType<PlayerHealth>().transform;
         rb = GetComponent<Rigidbody>();
+        playerHealth = FindFirstObjectByType<PlayerHealth>();
     }
 
-    private void Start()
+    void Update()
     {
+        dieTimer -= Time.deltaTime;
+        if (dieTimer <= 0)
+        {
+            Destroy(this.gameObject);
+        }
     }
-    public void Update()
-    {
-        rb.linearVelocity = camera.transform.forward * speed;
-        
-    }
+
     public void Init(int damage)
     {
         this.damage = damage;
@@ -31,10 +36,15 @@ public class Projectile : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
-        playerHealth?.TakeDamage(damage);
-
-        Instantiate(projectileHitVFX, transform.position, Quaternion.identity);
-        Destroy(this.gameObject);
+        if (!other.CompareTag("Player"))
+        {
+            Instantiate(projectileHitVFX, transform.position, Quaternion.identity);
+            Destroy(this.gameObject);
+        }
+        else if (other.CompareTag("Player"))
+        {
+            Instantiate(projectileHitVFX, transform.position, Quaternion.identity);
+            Destroy(this.gameObject);
+        }
     }
 }

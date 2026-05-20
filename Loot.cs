@@ -4,7 +4,6 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using System.Collections;
 using System;
-using UnityEditor.PackageManager;
 using TMPro;
 
 public class Loot : MonoBehaviour

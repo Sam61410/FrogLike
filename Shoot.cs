@@ -1,72 +1,66 @@
-using StarterAssets;
+using UnityEngine;
 using System;
 using System.Collections;
-using UnityEngine;
-using TMPro;
-
-
 
 public class Shoot : MonoBehaviour
 {
+    public GameObject bulletPrefab;
     public Transform ShootPoint;
     public Transform FirePoint;
     public GameObject Fire;
     public GameObject HitPoint;
 
-    [SerializeField] GameObject projectilePrefab;
-    [SerializeField] Transform projectileSpawnPoint;
-    [SerializeField] int damage = 2;
-    [SerializeField] float fireRate = 2f;
-    [SerializeField] TMP_Text ultText;
-
     public bool canShoot;
-    public float ultTimer = 1f;
+
+    public int damage = 5;
+    public int shootDistance = 100;
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0) && canShoot)
+        if(Input.GetButtonDown("Fire1") && canShoot)
         {
-            Debug.Log("hdadafq");
             Shooting();
         }
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            StartCoroutine(FireRoutine());
+        if(Input.GetKeyUp(KeyCode.E) && canShoot)
+         {
+            //Ultimate();
         }
+    }
+
+    public void Ultimate()
+    {
+        RaycastHit hit;
+        if (bulletPrefab != null && ShootPoint != null)
+        {
+            Instantiate(bulletPrefab, ShootPoint.position, ShootPoint.rotation);
+            bulletPrefab.GetComponent<Rigidbody>().angularVelocity = ShootPoint.forward * 100000f;
+            bulletPrefab.GetComponent<Rigidbody>().linearVelocity = ShootPoint.forward * 100000f;
+        }
+      
     }
 
     public void Shooting()
     {
         RaycastHit hit;
 
-        if (Physics.Raycast(ShootPoint.position, ShootPoint.forward, out hit, 100f))
+        if(Physics.Raycast(ShootPoint.position, ShootPoint.forward, out hit, shootDistance))
         {
             Debug.DrawRay(ShootPoint.position, ShootPoint.forward * hit.distance, Color.red);
 
-            hit.collider.GetComponent<EnemyHealth>()?.TakeDamage(5);
+            hit.collider.GetComponent<EnemyHealth>()?.TakeDamage(damage);
+            hit.collider.GetComponent<DoorHealth>()?.TakeDamage(damage);
+            hit.collider.GetComponent<TutorialDoorHealth>()?.TakeDamage(damage);
+            hit.collider.GetComponent<TutorialEnemyHealth>()?.TakeDamage(damage);
+            hit.collider.GetComponent<TutorialEndButton>()?.TakeDamage(damage);
+            hit.collider.GetComponent<ChangeColor>()?.ColorChange();
 
-            Instantiate(HitPoint, hit.point, Quaternion.identity);
-            Instantiate(Fire, FirePoint.position, Quaternion.identity);
+            if(!hit.collider.CompareTag("Aim Helper"))
+            {
+                Instantiate(HitPoint, hit.point, Quaternion.identity);
+                Instantiate(Fire, FirePoint.position, Quaternion.identity);
+            }
         }
-    }
 
-    public void HandleUltTimer()
-    {
-        if (ultTimer > 0f && canShoot)
-        {
-            ultTimer -= Time.deltaTime;
-            ultText.text = "Leap (Q) : " + Mathf.Clamp(ultTimer, 0f, 2f).ToString("F2") + "s";
-        }
-        else
-        {
-            ultText.text = "Leap (Q) ready!";
-        }
-    }
 
-    IEnumerator FireRoutine()
-    {
-        yield return new WaitForSeconds(fireRate);
-        Projectile newProjectile = Instantiate(projectilePrefab, FirePoint.position, Quaternion.identity).GetComponent<Projectile>();
-        newProjectile.Init(damage);
     }
 }

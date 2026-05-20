@@ -6,33 +6,26 @@ using System.Collections;
 using System;
 using TMPro;
 
-public class EnemyHealth : MonoBehaviour
+public class DoorHealth : MonoBehaviour
 {
     [SerializeField] ThirdPersonController player;
     [SerializeField] PlayerHealth playerHealth;
     [SerializeField] CoinManager coinManager;
-    [SerializeField] GameManager gameManager;
-    [SerializeField] WaveManager waveManager;
     [SerializeField] public Slider enemyHealthBar;
 
-    public int damage;
-    public float health = 20;
-    public float maxHealth = 20;
+    public int damage = 2;
+    private int health = 20;
+    public int maxHealth = 20;
 
     public int coinAmount;
     public int healAmount;
 
-    public event Action OnDeath;
-
     public void Start()
     {
-        waveManager = FindFirstObjectByType<WaveManager>();
+        health = maxHealth;
         enemyHealthBar = GetComponentInChildren<Slider>();
-        gameManager = FindFirstObjectByType<GameManager>();
         playerHealth = FindFirstObjectByType<PlayerHealth>();
         coinManager = FindFirstObjectByType<CoinManager>();
-        maxHealth = (health * Mathf.Sqrt(waveManager.currentWaveIndex + 1f));
-        health = maxHealth;
         enemyHealthBar.maxValue = maxHealth;
         enemyHealthBar.value = maxHealth;
         player = FindFirstObjectByType<ThirdPersonController>();
@@ -50,14 +43,6 @@ public class EnemyHealth : MonoBehaviour
         }
     }
 
-    public void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Bullet"))
-        {
-            TakeDamage(damage);
-        }
-    }
-
     public void TakeDamage(int damage)
     {
         health -= damage;
@@ -66,8 +51,6 @@ public class EnemyHealth : MonoBehaviour
 
     public void Die()
     {
-        OnDeath?.Invoke();
-        gameManager.UpdateEnemyCount(-1);
         playerHealth.Heal(healAmount);
         coinManager.AddCoins(coinAmount);
         Destroy(this.gameObject);

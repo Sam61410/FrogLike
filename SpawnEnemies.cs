@@ -4,7 +4,6 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 using System.Collections;
 using System;
-using UnityEditor.PackageManager;
 using TMPro;
 
 public class SpawnEnemies : MonoBehaviour
@@ -13,15 +12,20 @@ public class SpawnEnemies : MonoBehaviour
     public float spawnTimeOut = 4f;
 
     [SerializeField] Slider healthBar;
+    [SerializeField] GameManager gameManager;
+    public GameObject[] enemyPrefabs;
 
-    public bool shouldSpawnEnemies = false;
-
-    [SerializeField] public GameObject enemyPrefab;
-
+    public int enemyType;
     // Update is called once per frame
+
+    public void Start()
+    {
+        healthBar = FindFirstObjectByType<Slider>();
+        gameManager = FindFirstObjectByType<GameManager>(); 
+    }
     void Update()
     {
-        if (shouldSpawnEnemies)
+        if (gameManager.canSpawn)
         {
             if (spawnTimer > 0f)
             {
@@ -30,14 +34,16 @@ public class SpawnEnemies : MonoBehaviour
             else
             {
                 SpawnEnemy();
-                spawnTimer = spawnTimeOut;
+                spawnTimer = UnityEngine.Random.Range(4f,8f);
             }
         }
         else return;
     }
     public void SpawnEnemy()
     {
-        Instantiate(enemyPrefab, transform.position, Quaternion.identity);
+        Instantiate(enemyPrefabs [enemyType], transform.position, Quaternion.identity);
+        enemyType = UnityEngine.Random.Range(0, enemyPrefabs.Length);
+        gameManager.UpdateEnemyCount(1);
         spawnTimer = spawnTimeOut;
     }
 }

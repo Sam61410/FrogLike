@@ -17,11 +17,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] TMP_Text titleText;
     [SerializeField] TMP_Text gameOverText;
     [SerializeField] TMP_Text winText;
-    [SerializeField] GameObject leapText;
-    [SerializeField] GameObject dashText;
+    [SerializeField] GameObject timerTexts;
     [SerializeField] GameObject coin;
     [SerializeField] GameObject background;
     [SerializeField] GameObject shopBackground;
+
+    [SerializeField] GameObject bossDoor;
+    [SerializeField] GameObject environment1;
+    [SerializeField] Transform bossSpawn;
+    [SerializeField] GameObject Boss;
+    [SerializeField] Light directionalLight;
 
     [SerializeField] ThirdPersonController thirdPersonController;
     [SerializeField] WaveManager waveManager;
@@ -34,6 +39,10 @@ public class GameManager : MonoBehaviour
     public bool gameStarted = false;
     public bool canSpawn = false;
     public bool gameOver = false;
+
+    public bool enemiesExplode = false;
+    public float enemyExplodePower = 1.5f;
+    public float enemyExplodeRadius = 5f;
 
     public int enemyCount = 0;
 
@@ -58,6 +67,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Y))
         {
+            Debug.Log("Quitting Game");
             Application.Quit();
         }
         if (gameOver)
@@ -139,8 +149,7 @@ public class GameManager : MonoBehaviour
         waveCountText.gameObject.SetActive(false);
         thirdPersonController.LockCameraPosition = true;
         coin.SetActive(false);
-        dashText.SetActive(false);
-        leapText.SetActive(false);
+        timerTexts.SetActive(false);
         restartButton.gameObject.SetActive(false);
         startButton.gameObject.SetActive(true);
         tutorialButton.gameObject.SetActive(true);
@@ -150,13 +159,24 @@ public class GameManager : MonoBehaviour
     {
         waveCountText.gameObject.SetActive(true);
         enemyCountText.gameObject.SetActive(true);
-        leapText.gameObject.SetActive(true);
-        dashText.gameObject.SetActive(true);
+        timerTexts.SetActive(true);
         titleText.gameObject.SetActive(false);
         startButton.gameObject.SetActive(false);
         tutorialButton.gameObject.SetActive(false);
         coin.SetActive(true);
         background.SetActive(false);
+    }
+
+    public void BossFight()
+    {
+        bossDoor.transform.Rotate(0, 90, 0);
+        environment1.SetActive(false);
+        directionalLight.color = Color.red;
+        directionalLight.intensity = 0.5f;
+        Instantiate(Boss, bossSpawn.position, Quaternion.identity);
+        Boss.GetComponent<BossAI>().enabled = true;
+        waveCountText.SetText("Boss Fight");
+        enemyCountText.gameObject.SetActive(false);
     }
 
     public void WinGame()
@@ -171,8 +191,7 @@ public class GameManager : MonoBehaviour
 
     public void DeactivateUI()
     {
-        leapText.SetActive(false);
-        dashText.SetActive(false);
+        timerTexts.SetActive(false);
         enemyCountText.gameObject.SetActive(false);
         waveCountText.gameObject.SetActive(false);
         titleText.gameObject.SetActive(true);
@@ -183,13 +202,11 @@ public class GameManager : MonoBehaviour
     public void ActivateShop()
     {
         enemyCountText.gameObject.SetActive(false);
-        dashText.SetActive(false);  
-        leapText.SetActive(false);
+        timerTexts.SetActive(false);
     }
-     public void DeactivateShop()
+    public void DeactivateShop()
     {
         enemyCountText.gameObject.SetActive(true);
-        dashText.SetActive(true);
-        leapText.SetActive(true);   
+        timerTexts.SetActive(true);   
     }
 }

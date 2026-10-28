@@ -3,22 +3,27 @@ using StarterAssets;
 
 public class ShopManager : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] Shoot shoot;
     [SerializeField] ThirdPersonController controller;
     [SerializeField] StarterAssetsInputs starterAssets;
-    [SerializeField] Dash dash;
-    [SerializeField] Leap leap;
     [SerializeField] PlayerHealth health;
     [SerializeField] WaveManager waveManager;
     [SerializeField] GameManager gameManager;
+    [SerializeField] Dash dash;
+    [SerializeField] Leap leap;
     [SerializeField] CoinManager coin;
+    [SerializeField] InventoryManager inventory;
 
-    [SerializeField] int healCost = 50;
-    [SerializeField] int damageCost = 50;
-    [SerializeField] int speedCost = 50;
-    [SerializeField] int leapCost = 50;
-    [SerializeField] int dashCost = 50;
-    [SerializeField] int rangeCost = 50;
+    [Header("Upgrade Costs")]
+     public int healCost = 50;
+     public int damageCost = 100;
+     public int speedCost = 50;
+     public int leapCost = 100;
+     public int dashCost = 100;
+     public int rangeCost = 50;
+
+    [SerializeField] Sprite damageIcon;
 
     [SerializeField] GameObject rangeHelper;
     [SerializeField] GameObject shopBackground;
@@ -41,7 +46,7 @@ public class ShopManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         shopBackground.SetActive(false);
         waveManager.canSpawn = true;
-        waveManager.StartCoroutine(waveManager.ShopRoutine());
+        waveManager.StartNextWave();
         shoot.canShoot = true;
         leap.canLeap = true;
         dash.canDash = true;
@@ -64,7 +69,7 @@ public class ShopManager : MonoBehaviour
         }
         else
         {
-            health.Heal(health.maxHealth * .05f);
+            health.Heal(health.maxHealth * .07f);
             coin.SpendCoins(healCost);
         }
     }
@@ -79,6 +84,7 @@ public class ShopManager : MonoBehaviour
         {
             shoot.damage += 1;
             coin.SpendCoins(damageCost);
+            //inventory.AddItem("Damage Upgrade", 1, damageIcon);
         }
     }
     public void IncreaseSpeed()
@@ -90,7 +96,7 @@ public class ShopManager : MonoBehaviour
         }
         else
         {
-            controller.MoveSpeed += 1;
+            controller.MoveSpeed *= 1.05f;
             coin.SpendCoins(speedCost);
         }
     }
@@ -103,7 +109,7 @@ public class ShopManager : MonoBehaviour
         }
         else
         {
-            controller.LeapPower += 1;
+            leap.leapTimeOut *= .97f;
             coin.SpendCoins(leapCost);
         }
     }
@@ -116,7 +122,7 @@ public class ShopManager : MonoBehaviour
         }
         else
         {
-            controller.DashSpeed += 1;
+            dash.dashTimeOut *= .97f;
             coin.SpendCoins(dashCost);
         }
     }

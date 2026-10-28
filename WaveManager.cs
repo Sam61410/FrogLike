@@ -22,6 +22,8 @@ public class WaveManager : MonoBehaviour
     [SerializeField] GameManager gameManager;
     [SerializeField] PlayerHealth playerHealth;
     [SerializeField] ShopManager shop;
+    [SerializeField] GameObject[] chests;
+    [SerializeField] GameObject chest;
 
     void Start()
     {
@@ -33,19 +35,6 @@ public class WaveManager : MonoBehaviour
         }
     }
 
-
-
-    public IEnumerator ShopRoutine()
-    {
-        if (enemiesAlive == 0 && !spawning && canSpawn)
-        {
-            OnWaveCompleted?.Invoke(currentWaveIndex);
-            StartNextWave();
-            Debug.Log("Starting next wave...");
-        }
-        yield return null;
-    }
-
     public void StartNextWave()
     {
         currentWaveIndex++;
@@ -55,7 +44,6 @@ public class WaveManager : MonoBehaviour
             Debug.Log("All waves completed!");
             return;
         }
-        playerHealth.Heal(10 * ((currentWaveIndex + 1))/2);
 
         Wave wave = waves[currentWaveIndex];
         OnWaveStarted?.Invoke(currentWaveIndex);
@@ -89,12 +77,16 @@ public class WaveManager : MonoBehaviour
         {
             enemyScript.OnDeath += HandleEnemyDeath;
         }
-        else
-        {
-            Debug.LogWarning("Spawned enemy has no EnemyHealth script with OnDeath event.");
-        }
     }
 
+
+    public void SpawnChest()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            Instantiate(chest, new Vector3(UnityEngine.Random.Range(-100f, 100f), 0, UnityEngine.Random.Range(-100f, 100f)), Quaternion.identity);
+        }
+    }
 
     private void HandleEnemyDeath()
     {
@@ -103,7 +95,6 @@ public class WaveManager : MonoBehaviour
         {
             OnWaveCompleted?.Invoke(currentWaveIndex);
             Debug.Log("Wave " + (currentWaveIndex + 1) + " completed!");
-            shop.OpenShop();
         }
     }
 }

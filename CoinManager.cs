@@ -10,8 +10,9 @@ public class CoinManager : MonoBehaviour
 {
     [SerializeField] TMP_Text coinText;
 
-    public int coinAmount = 0;
+    public int coinAmount;
     public int startingCoinAmount = 0;
+    public int coinMultiplier;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -26,21 +27,26 @@ public class CoinManager : MonoBehaviour
         coinText.text = "Coins: " + coinAmount;
     }
 
-    public void AddCoins(int amount)
+    public void CoinMultiply(int amount)
     {
-        coinAmount += amount;
+        coinMultiplier += amount;
     }
 
-    public sbyte SpendCoins(int amount)
+    public void AddCoins(int amount)
+    {
+        coinAmount += (amount * coinMultiplier);
+    }
+
+    public int SpendCoins(int amount)
     {
         if (coinAmount >= amount)
         {
             coinAmount -= amount;
-            return 0; // Success
+            return 0; 
         }
         else
         {
-            return -1; // Not enough coins
+            return -1; 
         }
     }
 }
